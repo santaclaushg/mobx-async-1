@@ -1,26 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import { observer, inject } from "mobx-react";
+import JSONPretty from "react-json-pretty";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  componentDidMount() {
+    this.props.WeatherStore.loadWeatherGenerator("");
+  }
+  render() {
+    const { WeatherStore } = this.props;
+    const { weatherData } = WeatherStore;
+    console.log(weatherData);
+    const weatherDataArray = [];
+    for (let key in weatherData) {
+      console.log(weatherData[key]);
+      weatherDataArray.push({ key, data: weatherData[key] });
+    }
+    console.log(weatherDataArray);
+    return (
+      <div className="App">
+        {/* <JSONPretty json={this.props.WeatherStore.weatherData} /> */}
+        {weatherDataArray.map(weatherData => (
+          <ul key={weatherData.key}>
+            <li>{weatherData.data.body}</li>
+            <li>{weatherData.data.email}</li>
+            <li>{weatherData.data.id}</li>
+            <li>{weatherData.data.name}</li>
+            <li>{weatherData.data.postId}</li>
+          </ul>
+        ))}
+      </div>
+    );
+  }
 }
 
-export default App;
+export default inject("WeatherStore")(observer(App));
